@@ -123,12 +123,13 @@ def converter_afnd_para_afd(afnd):
         estados_finais=novos_finais
     )
 
-def minimizar_afd(afd):
+# 5. Processo de Mimização
+def minimizar_afd(afd): # 5.a.i: Verificar se AF é deterministíco
     print("\n" + "="*40)
     print("=== INICIANDO MINIMIZAÇÃO DO AFD ===")
     print("="*40)
 
-    # 5.a.iii: Verificar estados alcançáveis a partir do estado inicial [cite: 28]
+    # 5.a.iii: Verificar estados alcançáveis a partir do estado inicial
     print("\nPasso 1: Removendo estados inalcançáveis...")
     alcancaveis = set()
     fila = [afd.q0]
@@ -147,7 +148,7 @@ def minimizar_afd(afd):
     finais_uteis = [q for q in afd.F if q in alcancaveis]
     print(f" -> Estados alcançáveis encontrados: {estados_uteis}")
 
-    # 5.a.ii: Verificar se a Função de Transição é total/completa [cite: 26]
+    # 5.a.ii: Verificar se a Função de Transição é total/completa 
     print("\nPasso 2: Verificando se a função de transição é total...")
     transicoes_completas = {q: dict(afd.delta.get(q, {})) for q in estados_uteis}
     precisa_estado_erro = False
@@ -159,8 +160,8 @@ def minimizar_afd(afd):
                 break
 
     if precisa_estado_erro:
-        estado_erro = "Erro" # Estado artificial (A) [cite: 27]
-        print(f" -> Incompleta! Adicionando estado artificial '{estado_erro}'[cite: 27].")
+        estado_erro = "Erro" # Estado artificial (A) 
+        print(f" -> Incompleta! Adicionando estado artificial '{estado_erro}'.")
         estados_uteis.append(estado_erro)
         transicoes_completas[estado_erro] = {simb: estado_erro for simb in afd.Sigma}
         
@@ -172,15 +173,15 @@ def minimizar_afd(afd):
     else:
         print(" -> A função já é total. Nenhuma alteração necessária.")
 
-    # 5.b: Construir a tabela de todos os pares de estados possíveis [cite: 29]
-    print("\nPasso 3: Construindo tabela de pares de estados possíveis[cite: 29]...")
+    # 5.b: Construir a tabela de todos os pares de estados possíveis
+    print("\nPasso 3: Construindo tabela de pares de estados possíveis...")
     pares = {}
     for i in range(len(estados_uteis)):
         for j in range(i + 1, len(estados_uteis)):
             pares[(estados_uteis[i], estados_uteis[j])] = False # False = Não marcados (Equivalentes)
 
-    # 5.c: Identificar os pares de estados trivialmente não equivalentes [cite: 30]
-    print("\nPasso 4: Marcando pares trivialmente não equivalentes (Final vs Não-Final)[cite: 30]...")
+    # 5.c: Identificar os pares de estados trivialmente não equivalentes 
+    print("\nPasso 4: Marcando pares trivialmente não equivalentes (Final vs Não-Final)...")
     for p in pares:
         q1, q2 = p
         # Um é final e o outro não é
@@ -188,8 +189,8 @@ def minimizar_afd(afd):
             pares[p] = True
             print(f" -> Par {p} marcado (Trivial).")
 
-    # 5.d: Analisar pares faltantes iterativamente [cite: 31, 32]
-    print("\nPasso 5: Analisando pares faltantes via processo de análise[cite: 31, 32]...")
+    # 5.d: Analisar pares faltantes iterativamente 
+    print("\nPasso 5: Analisando pares faltantes via processo de análise...")
     mudou = True
     while mudou:
         mudou = False
@@ -208,8 +209,8 @@ def minimizar_afd(afd):
                             print(f" -> Par {p} marcado! (Com o símbolo '{simb}' eles vão para o par já marcado {par_destino}).")
                             break
 
-    # 5.e: Unificar pares de estados equivalentes [cite: 33]
-    print("\nPasso 6: Unificando estados equivalentes[cite: 33]...")
+    # 5.e: Unificar pares de estados equivalentes
+    print("\nPasso 6: Unificando estados equivalentes...")
     equivalentes = [p for p, marcado in pares.items() if not marcado]
     
     if not equivalentes:
@@ -225,12 +226,12 @@ def minimizar_afd(afd):
         grupo_alvo = agrupamento[q2]
         for q in agrupamento:
             if agrupamento[q] == grupo_alvo:
-                agrupamento[q] = grupo_base # Unifica [cite: 33]
+                agrupamento[q] = grupo_base # Unifica 
 
     novos_estados = list(set(agrupamento.values()))
     
-    # 5.f: Gerar a função de transição equivalente do AFD Mínimo [cite: 34]
-    print("\nPasso 7: Gerando função de transição do AFD Mínimo[cite: 34]...")
+    # 5.f: Gerar a função de transição equivalente do AFD Mínimo
+    print("\nPasso 7: Gerando função de transição do AFD Mínimo...")
     novo_q0 = agrupamento[afd.q0]
     novos_finais = list(set([agrupamento[q] for q in finais_uteis]))
     
