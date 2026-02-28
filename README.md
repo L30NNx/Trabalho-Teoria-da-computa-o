@@ -1,3 +1,12 @@
+# Autores 
+Projeto desenvolvido como parte do conceito da disciplina Teoria da Computação:
+
+Gabriel Rosa Batista
+
+Hisashi Muniz Kamizono
+
+Leon Matheus Oliveira Alves
+
 # Trabalho-Teoria-da-computa-o
 O projeto está dividido em três grandes pilares: Autômatos, Gramáticas e Reconhecedores.
 
